@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const recipeRouter = require("./routes/recipeRoutes");
+const recipeRouter = require("./routes/recipe/recipeRoutes");
 const app = express();
 require("dotenv").config();
 const env = process.env;

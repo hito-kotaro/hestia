@@ -1,19 +1,44 @@
 const express = require("express");
 const app = express();
-const recipeModel = require("../models/Recipe");
+const service = require("./recipeService");
+const recipeModel = require("../../models/Recipe");
 
 app.use(express.json());
 
+// ランダムピック
+app.get("/recipe/random", async (req, res) => {
+  const rate = Number(req.query.rate ?? 0);
+  const recipes = await service.fetchData(rate);
+  // 0からrecipes.lengthの範囲でランダム取得
+  const rand = Math.floor(Math.random() * recipes.length);
+
+  try {
+    res.send(recipes[rand]);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+// // ランダムピック
+app.get("/recipe/random/:tags", async (req, res) => {
+  const rate = Number(req.query.rate ?? 0);
+  const condition = Number(req.query.condition ?? 0);
+  const tags = req.params.tags.split(",");
+  const recipes = await service.fetchDataWithTags(rate, tags, condition);
+  // 0からrecipes.lengthの範囲でランダム
+  const rand = Math.floor(Math.random() * recipes.length);
+  try {
+    res.send(recipes[rand]);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
 // データ取得
 app.get("/recipes", async (req, res) => {
-  console.log("untag");
   const rate = Number(req.query.rate ?? 0);
-  let recipes;
-  if (rate == 0) {
-    recipes = await recipeModel.find({});
-  } else {
-    recipes = await recipeModel.find({ rate: { $gte: rate } });
-  }
+  console.log(rate);
+  const recipes = await service.fetchData(rate);
 
   try {
     res.send(recipes);
@@ -27,34 +52,7 @@ app.get("/recipes/:tags", async (req, res) => {
   const condition = Number(req.query.condition ?? 0);
   const rate = Number(req.query.rate ?? 0);
   const tags = req.params.tags.split(",");
-
-  let recipes;
-  // condition 0なら指定タグを全て含む
-  // condition 1なら指定タグのいずれかを含む
-  if (rate == 0) {
-    if (condition == 0) {
-      // 指定タグ全てを含む
-      recipes = await recipeModel.find({ tags: { $all: tags } });
-    } else {
-      // 指定タグのいずれかを含む
-      recipes = await recipeModel.find({ tags: { $in: tags } });
-    }
-  } else {
-    if (condition == 0) {
-      // 指定タグ全てを含む
-      recipes = await recipeModel.find({
-        tags: { $all: tags },
-        rate: { $gte: rate },
-      });
-    } else {
-      // 指定タグのいずれかを含む
-      recipes = await recipeModel.find({
-        tags: { $in: tags },
-        rate: { $gte: rate },
-      });
-    }
-  }
-
+  const recipes = await service.fetchDataWithTags(rate, tags, condition);
   try {
     res.send(recipes);
   } catch (err) {
