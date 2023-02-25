@@ -15,7 +15,7 @@
 - ランダム選出
 - ランダム選出(タグ指定)
 
-#　前提
+# 前提
 
 - Docker と docker-compose のインストール
 - MongoDB の登録と DB,ユーザ の作成
