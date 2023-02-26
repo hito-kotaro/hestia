@@ -19,7 +19,7 @@ app.get("/recipe/random", async (req, res) => {
   }
 });
 
-// // ランダムピック
+// ランダムピック
 app.get("/recipe/random/:tags", async (req, res) => {
   const rate = Number(req.query.rate ?? 0);
   const condition = Number(req.query.condition ?? 0);
@@ -77,6 +77,20 @@ app.post("/recipe", async (req, res) => {
   try {
     await recipe.save();
     res.send(recipe);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+// tagのみ取得
+app.get("/tags", async (req, res) => {
+  console.log("tags!");
+  // const tags = await recipeModel.find().select("tags");
+  const tags = await recipeModel.distinct("tags");
+  console.log(tags);
+
+  try {
+    res.send(tags);
   } catch (err) {
     res.status(500).send(err);
   }

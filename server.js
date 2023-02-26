@@ -13,6 +13,6 @@ mongoose
   .then(() => console.log(`Connecting: ${env.DB_NAME}`))
   .catch((err) => console.log(err));
 
-app.listen(env.PORT, () => {
+app.listen(env.PORT, "0.0.0.0", () => {
   console.log("Start");
 });
