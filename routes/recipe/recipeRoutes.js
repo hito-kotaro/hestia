@@ -1,9 +1,11 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const service = require("./recipeService");
 const recipeModel = require("../../models/Recipe");
 
 app.use(express.json());
+app.use(cors());
 
 // ランダムピック
 app.get("/recipe/random", async (req, res) => {
